@@ -1,15 +1,18 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YamlDotNet.RepresentationModel;
+using TwitterText;
 
 namespace Tests {
 
     public class TestData {
         public string Description { get; set; }
         public string Text { get; set; }
-        public string Expected { get; set; }
+        public List<string> Expected { get; set; }
+        public List<string> Actual { get; set; }
     }
 
     [TestClass]
@@ -17,45 +20,30 @@ namespace Tests {
 
         public TestContext TestContext { get; set; }
 
-        public IList<TestData> LoadTests(string file, string section) {
-            var tests = new List<TestData>();
-
+        public IEnumerable<TestData> LoadTests(string file, string section) {
             // load YAML file
-            var dir = Path.Combine(TestContext.TestRunDirectory, "twitter-text-conformance");
-            var stream = new StreamReader(Path.Combine(dir, file));
+            var stream = new StreamReader(Path.Combine(TestContext.TestDeploymentDir, file));
             var yaml = new YamlStream();
             yaml.Load(stream);
 
-            // Examine the stream
+            // list all the items
             var root = (YamlMappingNode)yaml.Documents[0].RootNode;
-
-            foreach (var entry in root.Children) {
-                Console.WriteLine(((YamlScalarNode)entry.Key).Value);
-            }
-
-            //raise  "No such test suite: #{test_type.to_s}" unless yaml["tests"][test_type.to_s]
-
-
-            // List all the items
-            var items = (YamlSequenceNode)root.Children[new YamlScalarNode("section")];
+            var tests = root.Children[new YamlScalarNode("tests")] as YamlMappingNode;
+            var items = tests.Children[new YamlScalarNode(section)] as YamlSequenceNode;
             foreach (YamlMappingNode item in items) {
-                Console.WriteLine(
-                    "{0}\t{1}",
-                    item.Children[new YamlScalarNode("description")],
-                    item.Children[new YamlScalarNode("text")]
-                );
-
-                tests.Add(new TestData());
+                yield return new TestData {
+                    Description = item.Children[new YamlScalarNode("description")].ToString(),
+                    Text = item.Children[new YamlScalarNode("text")].ToString(),
+                    Expected = ((YamlSequenceNode)item.Children[new YamlScalarNode("expected")]).Children.ToList().ConvertAll(x => x.ToString())
+                };
             }
-            return tests;
         }
-
-
 
         [TestMethod]
         public void ExtractMentionsTest() {
-            var tests = LoadTests("extract.yml", "mentions");
-            Assert.Fail("Extract mentions failed");
+            foreach (var test in LoadTests("extract.yml", "mentions")) {
+                CollectionAssert.AreEquivalent(test.Expected, test.Text.ExtractUsernames(), test.Description);
+            }
         }
 
         [TestMethod]
