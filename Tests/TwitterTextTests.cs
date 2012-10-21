@@ -17,26 +17,44 @@ namespace Tests {
 
     [TestClass]
     public class TwitterTextTests {
+        private Dictionary<string, Dictionary<string, List<TestData>>> _testdata = new Dictionary<string, Dictionary<string, List<TestData>>>();
 
         public TestContext TestContext { get; set; }
 
-        public IEnumerable<TestData> LoadTests(string file, string section) {
-            // load YAML file
-            var stream = new StreamReader(Path.Combine(TestContext.TestDeploymentDir, file));
-            var yaml = new YamlStream();
-            yaml.Load(stream);
+        public IList<TestData> LoadTests(string file, string section) {
+            Dictionary<string, List<TestData>> dict = null;
 
-            // list all the items
-            var root = (YamlMappingNode)yaml.Documents[0].RootNode;
-            var tests = root.Children[new YamlScalarNode("tests")] as YamlMappingNode;
-            var items = tests.Children[new YamlScalarNode(section)] as YamlSequenceNode;
-            foreach (YamlMappingNode item in items) {
-                yield return new TestData {
-                    Description = item.Children[new YamlScalarNode("description")].ToString(),
-                    Text = item.Children[new YamlScalarNode("text")].ToString(),
-                    Expected = ((YamlSequenceNode)item.Children[new YamlScalarNode("expected")]).Children.ToList().ConvertAll(x => x.ToString())
-                };
+            if (!_testdata.TryGetValue(file, out dict)) {
+
+                // load YAML file
+                var stream = new StreamReader(Path.Combine(TestContext.TestDeploymentDir, file));
+                var yaml = new YamlStream();
+                yaml.Load(stream);
+
+                // load tests
+                var root = yaml.Documents[0].RootNode as YamlMappingNode;
+                var tests = root.Children[new YamlScalarNode("tests")] as YamlMappingNode;
+                dict = new Dictionary<string, List<TestData>>();
+                foreach (var entry in tests.Children) {
+                    var sect = entry.Key as YamlScalarNode;
+                    var items = entry.Value as YamlSequenceNode;
+                    var list = new List<TestData>();
+                    foreach (YamlMappingNode item in items) {
+                        list.Add(new TestData {
+                            Description = item.Children[new YamlScalarNode("description")].ToString(),
+                            Text = item.Children[new YamlScalarNode("text")].ToString(),
+                            Expected = ((YamlSequenceNode)item.Children[new YamlScalarNode("expected")]).Children.ToList().ConvertAll(x => x.ToString())
+                        });
+                    }
+                    dict.Add(sect.Value, list);
+                }
+                _testdata.Add(file, dict);
+            } else {
+                return dict[section];
             }
+
+            Assert.Fail("File not found: " + file);
+            return null;
         }
 
         [TestMethod]
