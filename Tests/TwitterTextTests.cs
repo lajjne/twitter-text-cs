@@ -108,27 +108,97 @@ namespace Tests {
 
         [TestMethod]
         public void ExtractUrlsWithIndicesTest() {
-            Assert.Inconclusive();
+            var failures = new List<string>();
+            foreach (var test in LoadTests("extract.yml", "urls_with_indices")) {
+                List<Entity> actual = extractor.extractURLsWithIndices(test.text);
+                try {
+                    for (int i = 0; i < actual.Count; i++) {
+                        var entity = actual[i];
+                        Assert.AreEqual(test.expected[i].url, entity.getValue());
+                        Assert.AreEqual(test.expected[i].indices[0], entity.getStart());
+                        Assert.AreEqual(test.expected[i].indices[1], entity.getEnd());
+                    }
+                } catch (AssertFailedException) {
+                    failures.Add(test.description);
+                }
+            }
+            if (failures.Any()) {
+                Assert.Fail(string.Join("\n", failures));
+            }
         }
 
         [TestMethod]
         public void ExtractHashtagsTest() {
-            Assert.Inconclusive();
+            var failures = new List<string>();
+            foreach (var test in LoadTests("extract.yml", "hashtags")) {
+                List<string> actual = extractor.extractHashtags(test.text);
+                try {
+                    CollectionAssert.AreEquivalent(test.expected, actual);
+                } catch (AssertFailedException) {
+                    failures.Add(test.description);
+                }
+            }
+            if (failures.Any()) {
+                Assert.Fail(string.Join("\n", failures));
+            }
         }
 
         [TestMethod]
         public void ExtractHashtagsWithIndicesTest() {
-            Assert.Inconclusive();
+            var failures = new List<string>();
+            foreach (var test in LoadTests("extract.yml", "hashtags_with_indices")) {
+                List<Entity> actual = extractor.extractHashtagsWithIndices(test.text);
+                try {
+                    for (int i = 0; i < actual.Count; i++) {
+                        var entity = actual[i];
+                        Assert.AreEqual(test.expected[i].hashtag, entity.getValue());
+                        Assert.AreEqual(test.expected[i].indices[0], entity.getStart());
+                        Assert.AreEqual(test.expected[i].indices[1], entity.getEnd());
+                    }
+                } catch (AssertFailedException) {
+                    failures.Add(test.description);
+                }
+            }
+            if (failures.Any()) {
+                Assert.Fail(string.Join("\n", failures));
+            }
         }
 
         [TestMethod]
         public void ExtractCashtagsTest() {
-            Assert.Inconclusive();
+            var failures = new List<string>();
+            foreach (var test in LoadTests("extract.yml", "cashtags")) {
+                List<string> actual = extractor.extractCashtags(test.text);
+                try {
+                    CollectionAssert.AreEquivalent(test.expected, actual);
+                } catch (AssertFailedException) {
+                    failures.Add(test.description);
+                }
+            }
+            if (failures.Any()) {
+                Assert.Fail(string.Join("\n", failures));
+            }
         }
 
         [TestMethod]
         public void ExtractCashtagsWithIndicesTest() {
-            Assert.Inconclusive();
+            var failures = new List<string>();
+            foreach (var test in LoadTests("extract.yml", "cashtags_with_indices")) {
+                List<Entity> actual = extractor.extractCashtagsWithIndices(test.text);
+                try {
+                    for (int i = 0; i < actual.Count; i++) {
+                        var entity = actual[i];
+                        Assert.AreEqual(test.expected[i].cashtag, entity.getValue());
+                        Assert.AreEqual(test.expected[i].indices[0], entity.getStart());
+                        Assert.AreEqual(test.expected[i].indices[1], entity.getEnd());
+                    }
+                } catch (AssertFailedException) {
+                    failures.Add(test.description);
+                }
+            }
+            if (failures.Any()) {
+                Assert.Fail(string.Join("\n", failures));
+            }
         }
 
         [TestMethod]
