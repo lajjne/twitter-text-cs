@@ -11,57 +11,99 @@ namespace Tests {
 
     [TestClass]
     public class TwitterTextTests {
-        private Dictionary<string, Dictionary<string, List<dynamic>>> _testdata = new Dictionary<string, Dictionary<string, List<dynamic>>>();
+        private Dictionary<string, Dictionary<string, List<dynamic>>> testdict = new Dictionary<string, Dictionary<string, List<dynamic>>>();
         private Extractor extractor = new Extractor();
-
         public TestContext TestContext { get; set; }
 
         [TestMethod]
         public void ExtractMentionsTest() {
+            var failures = new List<string>();
             foreach (var test in LoadTests("extract.yml", "mentions")) {
-                var actual = extractor.extractMentionedScreennames(test.text);
-                CollectionAssert.AreEquivalent(test.expected, actual, test.description);
+                List<string> actual = extractor.extractMentionedScreennames(test.text);
+                try {
+                    CollectionAssert.AreEquivalent(test.expected, actual);
+                } catch (AssertFailedException) {
+                    failures.Add(test.description);
+                }
+            }
+            if (failures.Any()) {
+                Assert.Fail(string.Join("\n", failures));
             }
         }
 
         [TestMethod]
         public void ExtractMentionsWithIndicesTest() {
+            var failures = new List<string>();
             foreach (var test in LoadTests("extract.yml", "mentions_with_indices")) {
                 List<Entity> actual = extractor.extractMentionedScreennamesWithIndices(test.text);
-                for (int i = 0; i < actual.Count; i++) {
-                    var entity = actual[i];
-                    Assert.AreEqual(test.expected[i].screen_name, entity.getValue(), test.description);
-                    Assert.AreEqual(test.expected[i].indices[0], entity.getStart(), test.description);
-                    Assert.AreEqual(test.expected[i].indices[1], entity.getEnd(), test.description);
+                try {
+                    for (int i = 0; i < actual.Count; i++) {
+                        var entity = actual[i];
+                        Assert.AreEqual(test.expected[i].screen_name, entity.getValue());
+                        Assert.AreEqual(test.expected[i].indices[0], entity.getStart());
+                        Assert.AreEqual(test.expected[i].indices[1], entity.getEnd());
+                    }
+                } catch (AssertFailedException) {
+                    failures.Add(test.description);
                 }
+            }
+            if (failures.Any()) {
+                Assert.Fail(string.Join("\n", failures));
             }
         }
 
         [TestMethod]
         public void ExtractMentionsOrListsWithIndicesTest() {
+            var failures = new List<string>();
             foreach (var test in LoadTests("extract.yml", "mentions_or_lists_with_indices")) {
                 List<Entity> actual = extractor.extractMentionsOrListsWithIndices(test.text);
-                for (int i = 0; i < actual.Count; i++) {
-                    var entity = actual[i];
-                    Assert.AreEqual(test.expected[i].screen_name, entity.getValue(), test.description);
-                    Assert.AreEqual(test.expected[i].list_slug, entity.getListSlug(), test.description);
-                    Assert.AreEqual(test.expected[i].indices[0], entity.getStart(), test.description);
-                    Assert.AreEqual(test.expected[i].indices[1], entity.getEnd(), test.description);
+                try {
+                    for (int i = 0; i < actual.Count; i++) {
+                        var entity = actual[i];
+                        Assert.AreEqual(test.expected[i].screen_name, entity.getValue());
+                        Assert.AreEqual(test.expected[i].list_slug, entity.getListSlug());
+                        Assert.AreEqual(test.expected[i].indices[0], entity.getStart());
+                        Assert.AreEqual(test.expected[i].indices[1], entity.getEnd());
+                    }
+                } catch (AssertFailedException) {
+                    failures.Add(test.description);
                 }
+            }
+            if (failures.Any()) {
+                Assert.Fail(string.Join("\n", failures));
             }
         }
 
         [TestMethod]
         public void ExtractRepliesTest() {
+            var failures = new List<string>();
             foreach (var test in LoadTests("extract.yml", "replies")) {
-                var actual = extractor.extractReplyScreenname(test.text);
-                Assert.AreEqual(test.expected, actual, test.description);
+                string actual = extractor.extractReplyScreenname(test.text);
+                try {
+                    Assert.AreEqual(test.expected, actual);
+                } catch (AssertFailedException) {
+                    failures.Add(test.description);
+                }
+            }
+            if (failures.Any()) {
+                Assert.Fail(string.Join("\n", failures));
             }
         }
 
         [TestMethod]
         public void ExtractUrlsTest() {
-            Assert.Inconclusive();
+            var failures = new List<string>();
+            foreach (var test in LoadTests("extract.yml", "urls")) {
+                List<string> actual = extractor.extractURLs(test.text);
+                try {
+                    CollectionAssert.AreEquivalent(test.expected, actual);
+                } catch (AssertFailedException) {
+                    failures.Add(test.description);
+                }
+            }
+            if (failures.Any()) {
+                Assert.Fail(string.Join("\n", failures));
+            }
         }
 
         [TestMethod]
@@ -106,7 +148,7 @@ namespace Tests {
 
         private IList<dynamic> LoadTests(string file, string type) {
             Dictionary<string, List<dynamic>> dict = null;
-            if (!_testdata.TryGetValue(file, out dict)) {
+            if (!testdict.TryGetValue(file, out dict)) {
 
                 // load yaml file
                 var stream = new StreamReader(Path.Combine(TestContext.TestDeploymentDir, file));
@@ -131,7 +173,7 @@ namespace Tests {
                     }
                     dict.Add(sect.Value, list);
                 }
-                _testdata.Add(file, dict);
+                testdict.Add(file, dict);
             }
 
             return dict[type];
