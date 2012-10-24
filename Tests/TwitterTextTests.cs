@@ -12,38 +12,50 @@ namespace Tests {
     [TestClass]
     public class TwitterTextTests {
         private Dictionary<string, Dictionary<string, List<dynamic>>> _testdata = new Dictionary<string, Dictionary<string, List<dynamic>>>();
+        private Extractor extractor = new Extractor();
 
         public TestContext TestContext { get; set; }
-
-      
 
         [TestMethod]
         public void ExtractMentionsTest() {
             foreach (var test in LoadTests("extract.yml", "mentions")) {
-                var actual = TweetExtensions.ExtractUsernames(test.Text);
-                CollectionAssert.AreEquivalent(test.Expected, actual, test.Description);
+                var actual = extractor.extractMentionedScreennames(test.text);
+                CollectionAssert.AreEquivalent(test.expected, actual, test.description);
             }
         }
 
         [TestMethod]
         public void ExtractMentionsWithIndicesTest() {
-            Extractor extractor = new Extractor();
             foreach (var test in LoadTests("extract.yml", "mentions_with_indices")) {
-                var actual = extractor.extractMentionedScreennamesWithIndices(test.Text);
-                CollectionAssert.AreEquivalent(test.Expected, actual, test.Description);
+                List<Entity> actual = extractor.extractMentionedScreennamesWithIndices(test.text);
+                for (int i = 0; i < actual.Count; i++) {
+                    var entity = actual[i];
+                    Assert.AreEqual(test.expected[i].screen_name, entity.getValue(), test.description);
+                    Assert.AreEqual(test.expected[i].indices[0], entity.getStart(), test.description);
+                    Assert.AreEqual(test.expected[i].indices[1], entity.getEnd(), test.description);
+                }
             }
         }
 
         [TestMethod]
         public void ExtractMentionsOrListsWithIndicesTest() {
-            Assert.Inconclusive();
+            foreach (var test in LoadTests("extract.yml", "mentions_or_lists_with_indices")) {
+                List<Entity> actual = extractor.extractMentionsOrListsWithIndices(test.text);
+                for (int i = 0; i < actual.Count; i++) {
+                    var entity = actual[i];
+                    Assert.AreEqual(test.expected[i].screen_name, entity.getValue(), test.description);
+                    Assert.AreEqual(test.expected[i].list_slug, entity.getListSlug(), test.description);
+                    Assert.AreEqual(test.expected[i].indices[0], entity.getStart(), test.description);
+                    Assert.AreEqual(test.expected[i].indices[1], entity.getEnd(), test.description);
+                }
+            }
         }
 
         [TestMethod]
         public void ExtractRepliesTest() {
             foreach (var test in LoadTests("extract.yml", "replies")) {
-                var actual = ((string)test.Text).ExtractReplyUsername();
-                Assert.AreEqual(test.Expected, actual, test.Description);
+                var actual = extractor.extractReplyScreenname(test.text);
+                Assert.AreEqual(test.expected, actual, test.description);
             }
         }
 
@@ -111,10 +123,10 @@ namespace Tests {
                     var list = new List<dynamic>();
                     foreach (YamlMappingNode item in items) {
                         dynamic test = new ExpandoObject();
-                        test.Description = ConvertNode(item.Children.Single(x => x.Key.ToString() == "description").Value);
-                        test.Text = ConvertNode(item.Children.Single(x => x.Key.ToString() == "text").Value);
-                        test.Expected = ConvertNode(item.Children.Single(x => x.Key.ToString() == "expected").Value);
-                        test.Hits = ConvertNode(item.Children.SingleOrDefault(x => x.Key.ToString() == "hits").Value);
+                        test.description = ConvertNode<dynamic>(item.Children.Single(x => x.Key.ToString() == "description").Value);
+                        test.text = ConvertNode<dynamic>(item.Children.Single(x => x.Key.ToString() == "text").Value);
+                        test.expected = ConvertNode<dynamic>(item.Children.Single(x => x.Key.ToString() == "expected").Value);
+                        test.hits = ConvertNode<dynamic>(item.Children.SingleOrDefault(x => x.Key.ToString() == "hits").Value);
                         list.Add(test);
                     }
                     dict.Add(sect.Value, list);
@@ -125,21 +137,32 @@ namespace Tests {
             return dict[type];
         }
 
-        private dynamic ConvertNode(YamlNode node) {
+        private dynamic ConvertNode<T>(YamlNode node) {
             dynamic dynnode = node as dynamic;
 
             if (node is YamlScalarNode) {
-                return string.IsNullOrEmpty(dynnode.Value) ? null : dynnode.Value;
+                if (string.IsNullOrEmpty(dynnode.Value)) {
+                    return null;
+                } else if (typeof(T) == typeof(int)) {
+                    return int.Parse(dynnode.Value);
+                } else {
+                    return dynnode.Value;
+                }
             } else if (node is YamlSequenceNode) {
                 var list = new List<dynamic>();
                 foreach (var item in dynnode.Children) {
-                    list.Add(ConvertNode(item));
+                    list.Add(ConvertNode<T>(item));
                 }
                 return list;
             } else if (node is YamlMappingNode) {
                 dynamic mapnode = new ExpandoObject();
                 foreach (var item in ((YamlMappingNode)node).Children) {
-                    ((IDictionary<string, object>)mapnode).Add(item.Key.ToString(), ConvertNode(item.Value));
+                    var key = item.Key.ToString();
+                    if (key == "indices") {
+                        ((IDictionary<string, object>)mapnode).Add(key, ConvertNode<int>(item.Value));
+                    } else {
+                        ((IDictionary<string, object>)mapnode).Add(key, ConvertNode<T>(item.Value));
+                    }
                 }
                 return mapnode;
             }
