@@ -143,7 +143,7 @@ namespace TwitterText {
             string hashChar = text.Substring(entity.getStart(), 1);
             string hashtag = entity.getValue();
 
-            IDictionary<string, string> attrs = new SortedDictionary<string, string>();
+            IDictionary<string, string> attrs = new Dictionary<string, string>();
             attrs["href"] = hashtagUrlBase + hashtag;
             attrs["title"] = "#" + hashtag;
             attrs["class"] = hashtagClass;
@@ -154,7 +154,7 @@ namespace TwitterText {
         public void linkToCashtag(Entity entity, string text, StringBuilder builder) {
             string cashtag = entity.getValue();
 
-            IDictionary<string, string> attrs = new SortedDictionary<string, string>();
+            IDictionary<string, string> attrs = new Dictionary<string, string>();
             attrs["href"] = cashtagUrlBase + cashtag;
             attrs["title"] = "$" + cashtag;
             attrs["class"] = cashtagClass;
@@ -167,7 +167,7 @@ namespace TwitterText {
             // Get the original at char from text as it could be a full-width char.
             string atChar = text.Substring(entity.getStart(), 1);
 
-            IDictionary<string, string> attrs = new SortedDictionary<string, string>();
+            IDictionary<string, string> attrs = new Dictionary<string, string>();
             if (entity.listSlug != null) {
                 mention += entity.listSlug;
                 attrs["class"] = listClass;
@@ -246,7 +246,7 @@ namespace TwitterText {
                 }
             }
 
-            IDictionary<string, string> attrs = new SortedDictionary<string, string>();
+            IDictionary<string, string> attrs = new Dictionary<string, string>();
             attrs["href"] = url;
 
             if (!string.IsNullOrEmpty(urlClass)) {
