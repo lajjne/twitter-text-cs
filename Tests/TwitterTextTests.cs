@@ -412,7 +412,7 @@ namespace Tests {
                 } else if (typeof(T) == typeof(int)) {
                     return int.Parse(dynnode.Value);
                 } else if (typeof(T) == typeof(bool)) {
-                    return bool.Parse(dynnode.Value);
+                    return dynnode.Value == "true";
                 } else {
                     return dynnode.Value;
                 }

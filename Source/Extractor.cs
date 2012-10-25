@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,19 @@ namespace TwitterText {
     /// A class to extract usernames, lists, hashtags and URLs from Tweet text.
     /// </summary>
     public class Extractor {
+
+
+        private class StartIndexComparer : Comparer<Entity> {
+            public override int Compare(Entity a, Entity b) {
+                if (a.start > b.start) {
+                    return 1;
+                } if (a.start < b.start) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        }
 
         /// <summary>
         /// Indicates whether URLs without protocol should be extracted.
@@ -20,8 +34,30 @@ namespace TwitterText {
         public Extractor() {
         }
 
-        private void removeOverlappingEntities(List<Entity> entities) {
-            // TODO: translate to C#
+        private List<Entity> removeOverlappingEntities(List<Entity> entities) {
+
+            // sort by index
+            entities.Sort(new StartIndexComparer());
+
+            // Remove overlapping entities.
+            // Two entities overlap only when one is URL and the other is hashtag/mention
+            // which is a part of the URL. When it happens, we choose URL over hashtag/mention
+            // by selecting the one with smaller start index.
+            List<Entity> overlapping = new List<Entity>();
+            if (entities.Any()) {
+                Entity prev = null;
+                foreach (var cur in entities) {
+                    if (prev != null && prev.getEnd() > cur.getStart()) {
+                        overlapping.Add(cur);
+                    } else {
+                        prev = cur;
+                    }
+                }
+            }
+            return entities.Except(overlapping).ToList();
+
+
+
             //    // sort by index
             //    Collections.<Entity>sort(entities, new Comparator<Entity>() {
             //      public int compare(Entity e1, Entity e2) {
@@ -59,7 +95,7 @@ namespace TwitterText {
             entities.AddRange(extractMentionsOrListsWithIndices(text));
             entities.AddRange(extractCashtagsWithIndices(text));
 
-            removeOverlappingEntities(entities);
+            entities = removeOverlappingEntities(entities);
             return entities;
         }
 
@@ -386,8 +422,9 @@ namespace TwitterText {
                 if (urls.Any()) {
                     extracted.AddRange(urls);
                     // remove overlap
-                    removeOverlappingEntities(extracted);
+                    extracted = removeOverlappingEntities(extracted);
                     // remove URL entities
+                    extracted = extracted.Where(x => x.getType() == EntityType.HASHTAG).ToList();
                     //Iterator<Entity> it = extracted.iterator();
                     //while (it.hasNext()) {
                     //  Entity entity = it.next();
@@ -395,7 +432,7 @@ namespace TwitterText {
                     //    it.remove();
                     //  }
                     //}
-                    extracted = extracted.Where(x => x.getType() != EntityType.HASHTAG).ToList();
+
                 }
             }
 
