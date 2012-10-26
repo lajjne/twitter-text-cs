@@ -9,33 +9,55 @@ namespace TwitterText {
     /// </summary>
     public class Validator {
 
-        public static readonly int MAX_TWEET_LENGTH = 140;
+        private Extractor _extractor = new Extractor();
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public const int MAX_TWEET_LENGTH = 140;
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public int ShortUrlLength { get; set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public int ShortUrlLengthHttps { get; set; }
 
-        protected int shortUrlLength = 20;
-        protected int shortUrlLengthHttps = 21;
+        /// <summary>
+        /// 
+        /// </summary>
+        public Validator() {
+            ShortUrlLength = 20;
+            ShortUrlLengthHttps = 21;
+        }
 
-        private Extractor extractor = new Extractor();
-
-        public int getTweetLength(String text) {
-            //text = Normalizer.normalize(text, Normalizer.Form.NFC);
-            //int length = text.codePointCount(0, text.length());            
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public int GetTweetLength(String text) {
             text = text.Normalize(NormalizationForm.FormC);
             int length = text.Length;
-
-            //for (Extractor.Entity urlEntity : extractor.extractURLsWithIndices(text)) {
-            foreach (Entity urlEntity in extractor.extractURLsWithIndices(text)) {
-              length += urlEntity.start - urlEntity.end;
-              length += urlEntity.value.ToLower().StartsWith("https://") ? shortUrlLengthHttps : shortUrlLength;
+            foreach (Entity urlEntity in _extractor.ExtractURLsWithIndices(text)) {
+                length += urlEntity.Start - urlEntity.End;
+                length += urlEntity.Value.ToLower().StartsWith("https://") ? ShortUrlLengthHttps : ShortUrlLength;
             }
             return length;
         }
 
-        public bool isValidTweet(String text) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public bool IsValidTweet(String text) {
             if (string.IsNullOrEmpty(text)) {
                 return false;
             }
-
-            //for (char c : text.toCharArray()) {
             foreach (char c in text) {
                 //if (c == '\uFFFE' || c == '\uuFEFF' ||   // BOM
                 if (c == '\uFFFE' ||   // BOM
@@ -44,24 +66,7 @@ namespace TwitterText {
                     return false;
                 }
             }
-
-            return getTweetLength(text) <= MAX_TWEET_LENGTH;
-        }
-
-        public int getShortUrlLength() {
-            return shortUrlLength;
-        }
-
-        public void setShortUrlLength(int shortUrlLength) {
-            this.shortUrlLength = shortUrlLength;
-        }
-
-        public int getShortUrlLengthHttps() {
-            return shortUrlLengthHttps;
-        }
-
-        public void setShortUrlLengthHttps(int shortUrlLengthHttps) {
-            this.shortUrlLengthHttps = shortUrlLengthHttps;
+            return GetTweetLength(text) <= MAX_TWEET_LENGTH;
         }
     }
 }

@@ -7,39 +7,96 @@ namespace TwitterText {
 
     public class Entity {
 
-        internal int start;
-        internal int end;
-        internal readonly string value;
-        // listSlug is used to store the list portion of @mention/list.
-        internal readonly string listSlug;
-        internal readonly EntityType type;
+        /// <summary>
+        /// 
+        /// </summary>
+        public int Start { get; internal set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public int End { get; internal set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Value { get; internal set; }
 
-        internal string displayURL = null;
-        internal string expandedURL = null;
+        /// <summary>
+        /// ListSlug is used to store the list portion of @mention/list. 
+        /// </summary>
+        public string ListSlug { get; internal set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public EntityType Type { get; internal set; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public string DisplayURL { get; set;}
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ExpandedURL { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="value"></param>
+        /// <param name="listSlug"></param>
+        /// <param name="type"></param>
         public Entity(int start, int end, string value, string listSlug, EntityType type) {
-            this.start = start;
-            this.end = end;
-            this.value = value;
-            this.listSlug = listSlug;
-            this.type = type;
+            Start = start;
+            End = end;
+            Value = value;
+            ListSlug = listSlug;
+            Type = type;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="value"></param>
+        /// <param name="type"></param>
         public Entity(int start, int end, string value, EntityType type)
             : this(start, end, value, null, type) {
         }
 
-        // Offset -1 on start index to include @, # symbols for mentions and hashtags
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="matcher"></param>
+        /// <param name="type"></param>
+        /// <param name="groupNumber"></param>
         public Entity(System.Text.RegularExpressions.Match matcher, EntityType type, int groupNumber)
-            : this(matcher, type, groupNumber, -1) {
+            : this(matcher, type, groupNumber, -1) { // Offset -1 on start index to include @, # symbols for mentions and hashtags
+
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="matcher"></param>
+        /// <param name="type"></param>
+        /// <param name="groupNumber"></param>
+        /// <param name="startOffset"></param>
         public Entity(System.Text.RegularExpressions.Match matcher, EntityType type, int groupNumber, int startOffset) :
             this(matcher.Groups[groupNumber].Index + startOffset, matcher.Groups[groupNumber].Index + matcher.Groups[groupNumber].Length, matcher.Groups[groupNumber].Value, type) {
         }
 
-        // TODO: change to public override bool Equals()
-        public bool equals(Object obj) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(Object obj) {
             if (this == obj) {
                 return true;
             }
@@ -50,62 +107,32 @@ namespace TwitterText {
 
             Entity other = (Entity)obj;
 
-            if (this.type.Equals(other.type) &&
-                this.start == other.start &&
-                this.end == other.end &&
-                this.value.Equals(other.value)) {
+            if (Type.Equals(other.Type) &&
+                Start == other.Start &&
+                End == other.End &&
+                Value.Equals(other.Value)) {
                 return true;
             } else {
                 return false;
             }
         }
 
-
-        // TODO: change to public override int GetHashCode()
-        public int hashCode() {
-            return this.type.GetHashCode() + this.value.GetHashCode() + this.start + this.end;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode() {
+            return Type.GetHashCode() + Value.GetHashCode() + Start + End;
         }
 
-        // TODO: change to public override int ToString()
-        public string toString() {
-            return value + "(" + type + ") [" + start + "," + end + "]";
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString() {
+            return Value + "(" + Type + ") [" + Start + "," + End + "]";
         }
 
-        public int getStart() {
-            return start;
-        }
-
-        public int getEnd() {
-            return end;
-        }
-
-        public string getValue() {
-            return value;
-        }
-
-        public string getListSlug() {
-            return listSlug;
-        }
-
-        public EntityType getType() {
-            return type;
-        }
-
-        public string getDisplayURL() {
-            return displayURL;
-        }
-
-        public void setDisplayURL(string displayURL) {
-            this.displayURL = displayURL;
-        }
-
-        public string getExpandedURL() {
-            return expandedURL;
-        }
-
-        public void setExpandedURL(string expandedURL) {
-            this.expandedURL = expandedURL;
-        }
     }
 }
 

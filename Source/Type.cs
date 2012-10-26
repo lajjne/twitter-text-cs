@@ -5,10 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace TwitterText {
+    /// <summary>
+    /// 
+    /// </summary>
     public enum EntityType {
-        URL,
-        HASHTAG,
-        MENTION,
-        CASHTAG
+        Url,
+        Hashtag,
+        Mention,
+        Cashtag
     }
 }

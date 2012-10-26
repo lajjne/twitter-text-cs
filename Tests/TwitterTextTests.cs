@@ -20,7 +20,7 @@ namespace Tests {
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context) {
-            autolink.setNoFollow(false);
+            autolink.noFollow = false;
         }
 
         [TestMethod]
@@ -28,7 +28,7 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<dynamic>("extract.yml", "mentions")) {
                 try {
-                    List<string> actual = extractor.extractMentionedScreennames(test.text);
+                    List<string> actual = extractor.ExtractMentionedScreennames(test.text);
                     CollectionAssert.AreEquivalent(test.expected, actual);
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -44,12 +44,12 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<dynamic>("extract.yml", "mentions_with_indices")) {
                 try {
-                    List<Entity> actual = extractor.extractMentionedScreennamesWithIndices(test.text);
+                    List<Entity> actual = extractor.ExtractMentionedScreennamesWithIndices(test.text);
                     for (int i = 0; i < actual.Count; i++) {
                         var entity = actual[i];
-                        Assert.AreEqual(test.expected[i].screen_name, entity.getValue());
-                        Assert.AreEqual(test.expected[i].indices[0], entity.getStart());
-                        Assert.AreEqual(test.expected[i].indices[1], entity.getEnd());
+                        Assert.AreEqual(test.expected[i].screen_name, entity.Value);
+                        Assert.AreEqual(test.expected[i].indices[0], entity.Start);
+                        Assert.AreEqual(test.expected[i].indices[1], entity.End);
                     }
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -65,13 +65,13 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<dynamic>("extract.yml", "mentions_or_lists_with_indices")) {
                 try {
-                    List<Entity> actual = extractor.extractMentionsOrListsWithIndices(test.text);
+                    List<Entity> actual = extractor.ExtractMentionsOrListsWithIndices(test.text);
                     for (int i = 0; i < actual.Count; i++) {
                         var entity = actual[i];
-                        Assert.AreEqual(test.expected[i].screen_name, entity.getValue());
-                        Assert.AreEqual(test.expected[i].list_slug, entity.getListSlug());
-                        Assert.AreEqual(test.expected[i].indices[0], entity.getStart());
-                        Assert.AreEqual(test.expected[i].indices[1], entity.getEnd());
+                        Assert.AreEqual(test.expected[i].screen_name, entity.Value);
+                        Assert.AreEqual(test.expected[i].list_slug, entity.ListSlug);
+                        Assert.AreEqual(test.expected[i].indices[0], entity.Start);
+                        Assert.AreEqual(test.expected[i].indices[1], entity.End);
                     }
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -87,7 +87,7 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<dynamic>("extract.yml", "replies")) {
                 try {
-                    string actual = extractor.extractReplyScreenname(test.text);
+                    string actual = extractor.ExtractReplyScreenname(test.text);
                     Assert.AreEqual(test.expected, actual);
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -103,7 +103,7 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<dynamic>("extract.yml", "urls")) {
                 try {
-                    List<string> actual = extractor.extractURLs(test.text);
+                    List<string> actual = extractor.ExtractURLs(test.text);
                     CollectionAssert.AreEquivalent(test.expected, actual);
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -119,12 +119,12 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<dynamic>("extract.yml", "urls_with_indices")) {
                 try {
-                    List<Entity> actual = extractor.extractURLsWithIndices(test.text);
+                    List<Entity> actual = extractor.ExtractURLsWithIndices(test.text);
                     for (int i = 0; i < actual.Count; i++) {
                         var entity = actual[i];
-                        Assert.AreEqual(test.expected[i].url, entity.getValue());
-                        Assert.AreEqual(test.expected[i].indices[0], entity.getStart());
-                        Assert.AreEqual(test.expected[i].indices[1], entity.getEnd());
+                        Assert.AreEqual(test.expected[i].url, entity.Value);
+                        Assert.AreEqual(test.expected[i].indices[0], entity.Start);
+                        Assert.AreEqual(test.expected[i].indices[1], entity.End);
                     }
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -140,7 +140,7 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<dynamic>("extract.yml", "hashtags")) {
                 try {
-                    List<string> actual = extractor.extractHashtags(test.text);
+                    List<string> actual = extractor.ExtractHashtags(test.text);
                     CollectionAssert.AreEquivalent(test.expected, actual);
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -156,12 +156,12 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<dynamic>("extract.yml", "hashtags_with_indices")) {
                 try {
-                    List<Entity> actual = extractor.extractHashtagsWithIndices(test.text);
+                    List<Entity> actual = extractor.ExtractHashtagsWithIndices(test.text);
                     for (int i = 0; i < actual.Count; i++) {
                         var entity = actual[i];
-                        Assert.AreEqual(test.expected[i].hashtag, entity.getValue());
-                        Assert.AreEqual(test.expected[i].indices[0], entity.getStart());
-                        Assert.AreEqual(test.expected[i].indices[1], entity.getEnd());
+                        Assert.AreEqual(test.expected[i].hashtag, entity.Value);
+                        Assert.AreEqual(test.expected[i].indices[0], entity.Start);
+                        Assert.AreEqual(test.expected[i].indices[1], entity.End);
                     }
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -177,7 +177,7 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<dynamic>("extract.yml", "cashtags")) {
                 try {
-                    List<string> actual = extractor.extractCashtags(test.text);
+                    List<string> actual = extractor.ExtractCashtags(test.text);
                     CollectionAssert.AreEquivalent(test.expected, actual);
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -193,12 +193,12 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<dynamic>("extract.yml", "cashtags_with_indices")) {
                 try {
-                    List<Entity> actual = extractor.extractCashtagsWithIndices(test.text);
+                    List<Entity> actual = extractor.ExtractCashtagsWithIndices(test.text);
                     for (int i = 0; i < actual.Count; i++) {
                         var entity = actual[i];
-                        Assert.AreEqual(test.expected[i].cashtag, entity.getValue());
-                        Assert.AreEqual(test.expected[i].indices[0], entity.getStart());
-                        Assert.AreEqual(test.expected[i].indices[1], entity.getEnd());
+                        Assert.AreEqual(test.expected[i].cashtag, entity.Value);
+                        Assert.AreEqual(test.expected[i].indices[0], entity.Start);
+                        Assert.AreEqual(test.expected[i].indices[1], entity.End);
                     }
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -214,7 +214,7 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<string>("autolink.yml", "usernames")) {
                 try {
-                    string actual = autolink.autoLinkUsernamesAndLists(test.text);
+                    string actual = autolink.AutoLinkUsernamesAndLists(test.text);
                     Assert.AreEqual(test.expected, actual);
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -230,7 +230,7 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<string>("autolink.yml", "lists")) {
                 try {
-                    string actual = autolink.autoLinkUsernamesAndLists(test.text);
+                    string actual = autolink.AutoLinkUsernamesAndLists(test.text);
                     Assert.AreEqual(test.expected, actual);
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -246,7 +246,7 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<string>("autolink.yml", "hashtags")) {
                 try {
-                    string actual = autolink.autoLinkHashtags(test.text);
+                    string actual = autolink.AutoLinkHashtags(test.text);
                     Assert.AreEqual(test.expected, actual);
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -262,7 +262,7 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<string>("autolink.yml", "urls")) {
                 try {
-                    string actual = autolink.autoLinkURLs(test.text);
+                    string actual = autolink.AutoLinkURLs(test.text);
                     Assert.AreEqual(test.expected, actual);
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -278,7 +278,7 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<string>("autolink.yml", "cashtags")) {
                 try {
-                    string actual = autolink.autoLinkCashtags(test.text);
+                    string actual = autolink.AutoLinkCashtags(test.text);
                     Assert.AreEqual(test.expected, actual);
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -294,7 +294,7 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<string>("autolink.yml", "all")) {
                 try {
-                    string actual = autolink.autoLink(test.text);
+                    string actual = autolink.AutoLink(test.text);
                     Assert.AreEqual(test.expected, actual);
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -310,7 +310,7 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<string>("autolink.yml", "json")) {
                 try {
-                    string actual = autolink.autoLink(test.text);
+                    string actual = autolink.AutoLink(test.text);
                     Assert.AreEqual(test.expected, actual);
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -326,7 +326,7 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<string>("hit_highlighting.yml", "plain_text")) {
                 try {
-                    string actual = highlighter.highlight(test.text, test.hits);
+                    string actual = highlighter.Highlight(test.text, test.hits);
                     Assert.AreEqual(test.expected, actual);
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -342,7 +342,7 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<string>("hit_highlighting.yml", "with_links")) {
                 try {
-                    string actual = highlighter.highlight(test.text, test.hits);
+                    string actual = highlighter.Highlight(test.text, test.hits);
                     Assert.AreEqual(test.expected, actual);
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);
@@ -358,7 +358,7 @@ namespace Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<bool>("validate.yml", "tweets")) {
                 try {
-                    bool actual = validator.isValidTweet(test.text);
+                    bool actual = validator.IsValidTweet(test.text);
                     Assert.AreEqual(test.expected, actual);
                 } catch (Exception) {
                     failures.Add(test.description + ": " + test.text);

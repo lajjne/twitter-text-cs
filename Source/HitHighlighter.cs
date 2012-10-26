@@ -9,33 +9,38 @@ namespace TwitterText {
     /// </summary>
     public class HitHighlighter {
 
-        /** Default HTML tag for highlight hits */
-        public static readonly string DEFAULT_HIGHLIGHT_TAG = "em";
+        /// <summary>
+        /// Default HTML tag for highlight hits
+        /// </summary>
+        public const string DEFAULT_HIGHLIGHT_TAG = "em";
 
-        /** the current HTML tag used for hit highlighting */
-        protected string highlightTag;
+        /// <summary>
+        /// Get or sets the current HTML tag used for phrase highlighting.
+        /// </summary>
+        public string HighlightTag { get; set; }
 
-        /** Create a new HitHighlighter object. */
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HitHighlighter"/> class.
+        /// </summary>
         public HitHighlighter() {
-            highlightTag = DEFAULT_HIGHLIGHT_TAG;
+            HighlightTag = DEFAULT_HIGHLIGHT_TAG;
         }
 
-        /**
-         * Surround the <code>hits</code> in the provided <code>text</code> with an HTML tag. This is used with offsets
-         * from the search API to support the highlighting of query terms.
-         *
-         * @param text of the Tweet to highlight
-         * @param hits A List of highlighting offsets (themselves lists of two elements)
-         * @return text with highlight HTML added
-         */
-        public string highlight(string text, List<List<int>> hits) {
+        /// <summary>
+        /// Surround the hits in the provided text with an HTML tag. This is used with offsets
+        /// from the search API to support the highlighting of query terms.
+        /// </summary>
+        /// <param name="text">text of the Tweet to highlight</param>
+        /// <param name="hits"> A List of highlighting offsets (themselves lists of two elements)</param>
+        /// <returns>text with highlight HTML added</returns>
+        public string Highlight(string text, List<List<int>> hits) {
             if (hits == null || !hits.Any()) {
                 return (text);
             }
 
-            StringBuilder sb = new StringBuilder(text.Length);
-
             // TODO: translate to C#
+
+            //StringBuilder sb = new StringBuilder(text.Length);
             //CharacterIterator iterator = new StringCharacterIterator(text);
             //bool isCounting = true;
             //bool tagOpened = false;
@@ -70,43 +75,24 @@ namespace TwitterText {
             //if (tagOpened) {
             //  sb.Append(tag(true));
             //}
+            //return sb.ToString();
 
-            return sb.ToString();
+            return text;
         }
 
-        /**
-         * Format the current <code>highlightTag</code> by adding &lt; and >. If <code>closeTag</code> is <code>true</code>
-         * then the tag returned will include a <code>/</code> to signify a closing tag.
-         *
-         * @param true if this is a closing tag, false otherwise
-         */
-        protected string tag(bool closeTag) {
-            StringBuilder sb = new StringBuilder(highlightTag.Length + 3);
+        /// <summary>
+        /// Format the current HighlightTag by adding &lt; and >. If <paramref name="closeTag"/> is true.
+        /// then the tag returned will include a / to signify a closing tag.
+        /// <param name="closeTag">true if this is a closing tag, otherwise false</param>
+        /// <returns></returns>
+        protected string Tag(bool closeTag) {
+            StringBuilder sb = new StringBuilder(HighlightTag.Length + 3);
             sb.Append("<");
             if (closeTag) {
                 sb.Append("/");
             }
-            sb.Append(highlightTag).Append(">");
+            sb.Append(HighlightTag).Append(">");
             return sb.ToString();
         }
-
-        /**
-         * Get the current HTML tag used for phrase highlighting.
-         *
-         * @return current HTML tag (without &lt; or >)
-         */
-        public string getHighlightTag() {
-            return highlightTag;
-        }
-
-        /**
-         * Set the current HTML tag used for phrase highlighting.
-         *
-         * @param new HTML tag (without &lt; or >)
-         */
-        public void setHighlightTag(string highlightTag) {
-            this.highlightTag = highlightTag;
-        }
-
     }
 }
