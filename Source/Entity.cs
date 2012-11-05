@@ -132,7 +132,6 @@ namespace TwitterText {
         public override string ToString() {
             return Value + "(" + Type + ") [" + Start + "," + End + "]";
         }
-
     }
 }
 

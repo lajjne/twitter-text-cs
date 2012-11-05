@@ -24,33 +24,6 @@ namespace TwitterText {
         }
 
         /// <summary>
-        /// Remove overlapping entities. Two entities overlap only when one is URL and the other is hashtag/mention
-        /// which is a part of the URL. When it happens, we choose URL over hashtag/mention by selecting the one with smaller start index.
-        /// </summary>
-        /// <param name="entities"></param>
-        /// <returns></returns>
-        private List<Entity> RemoveOverlappingEntities(List<Entity> entities) {
-
-            // Sort by index
-            entities.Sort(new StartIndexComparer());
-
-            // Remove overlapping entities. Two entities overlap only when one is URL and the other is hashtag/mention which is a part of the URL. 
-            // When it happens, we choose URL over hashtag/mention by selecting the one with smaller start index.
-            List<Entity> overlapping = new List<Entity>();
-            if (entities.Any()) {
-                Entity prev = null;
-                foreach (var cur in entities) {
-                    if (prev != null && prev.End > cur.Start) {
-                        overlapping.Add(cur);
-                    } else {
-                        prev = cur;
-                    }
-                }
-            }
-            return entities.Except(overlapping).ToList();
-        }
-
-        /// <summary>
         /// Extract URLs, #hashtags, @mentions, lists and $cashtags from a given text/tweet.
         /// </summary>
         /// <param name="text">text of the tweet from which to extract entities.</param>
@@ -328,6 +301,33 @@ namespace TwitterText {
             }
 
             return extracted;
+        }
+
+        /// <summary>
+        /// Remove overlapping entities. Two entities overlap only when one is URL and the other is hashtag/mention
+        /// which is a part of the URL. When it happens, we choose URL over hashtag/mention by selecting the one with smaller start index.
+        /// </summary>
+        /// <param name="entities"></param>
+        /// <returns></returns>
+        private List<Entity> RemoveOverlappingEntities(List<Entity> entities) {
+
+            // Sort by index
+            entities.Sort(new StartIndexComparer());
+
+            // Remove overlapping entities. Two entities overlap only when one is URL and the other is hashtag/mention which is a part of the URL. 
+            // When it happens, we choose URL over hashtag/mention by selecting the one with smaller start index.
+            List<Entity> overlapping = new List<Entity>();
+            if (entities.Any()) {
+                Entity prev = null;
+                foreach (var cur in entities) {
+                    if (prev != null && prev.End > cur.Start) {
+                        overlapping.Add(cur);
+                    } else {
+                        prev = cur;
+                    }
+                }
+            }
+            return entities.Except(overlapping).ToList();
         }
 
         /// <summary>

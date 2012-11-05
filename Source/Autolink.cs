@@ -9,7 +9,10 @@ namespace TwitterText {
     /// </summary>
     public class Autolink {
 
-        private Extractor extractor = new Extractor();
+        /// <summary>
+        /// The Extractor used to extract entities from text.
+        /// </summary>
+        private Extractor _extractor;
 
         /// <summary>
         /// Default CSS class for auto-linked list URLs
@@ -59,102 +62,104 @@ namespace TwitterText {
         /// <summary>
         /// Gets or set the CSS class for auto-linked URLs.
         /// </summary>
-        public string urlClass { get; set; }
+        public string UrlClass { get; set; }
 
         /// <summary>
         /// Gets or set the CSS class for auto-linked list URLs.
         /// </summary>
-        public string listClass { get; set; }
+        public string ListClass { get; set; }
 
         /// <summary>
         /// Gets or set the CSS class for auto-linked username URLs.
         /// </summary>
-        public string usernameClass { get; set; }
+        public string UsernameClass { get; set; }
 
         /// <summary>
         /// Gets or sets the CSS class for auto-linked hashtag URLs.
         /// </summary>
-        public string hashtagClass { get; set; }
+        public string HashtagClass { get; set; }
 
         /// <summary>
         /// Gets or sets the CSS class for auto-linked cashtag URLs,
         /// </summary>
-        public string cashtagClass { get; set; }
+        public string CashtagClass { get; set; }
 
         /// <summary>
         /// Gets or sets the href value for username links (to which the username will be appended).
         /// </summary>
-        public string usernameUrlBase { get; set; }
+        public string UsernameUrlBase { get; set; }
 
         /// <summary>
         /// Gets or sets the href value for list links (to which the username/list will be appended).
         /// </summary>
-        public string listUrlBase { get; set; }
+        public string ListUrlBase { get; set; }
 
         /// <summary>
         /// Gets or sets the href value for hashtag links (to which the hashtag will be appended).
         /// </summary>
-        public string hashtagUrlBase { get; set; }
+        public string HashtagUrlBase { get; set; }
 
         /// <summary>
         /// Gets or sets the href value for cashtag links (to which the cashtag will be appended).
         /// </summary>
-        public string cashtagUrlBase { get; set; }
+        public string CashtagUrlBase { get; set; }
 
-        public string invisibleTagAttrs { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public string InvisibleTagAttrs { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating if the current URL links will include rel="nofollow" (true by default).
         /// </summary>
-        public bool noFollow { get; set; }
+        public bool NoFollow { get; set; }
 
         /// <summary>
         /// Sets a value indicating whether the at mark '@' should be included in the link (false by default).
         /// </summary>
-        public bool usernameIncludeSymbol { protected get; set; }
+        public bool UsernameIncludeSymbol { protected get; set; }
 
         /// <summary>
         /// Sets HTML tag to be applied around #/@/# symbols in hashtags/usernames/lists/cashtag. The tag should be without brackets e.g., "b" or "s".
         /// </summary>
-        public string symbolTag { protected get; set; }
+        public string SymbolTag { protected get; set; }
 
         /// <summary>
         /// Set HTML tag to be applied around text part of hashtags/usernames/lists/cashtag. The tag should be without brackets e.g., "b" or "s".
         /// </summary>
-        public string textWithSymbolTag { protected get; set; }
+        public string TextWithSymbolTag { protected get; set; }
 
         /// <summary>
         /// Sets the value of the target attribute in auto-linked URLs e.g., "_blank"
         /// </summary>
-        public string urlTarget { protected get; set; }
+        public string UrlTarget { protected get; set; }
 
         /// <summary>
         /// Sets a modifier to modify attributes of a link based on an entity.
         /// </summary>
-        public ILinkAttributeModifier linkAttributeModifier { protected get; set; }
+        public ILinkAttributeModifier LinkAttributeModifier { protected get; set; }
 
         /// <summary>
         /// Sets a modifier to modify text of a link based on an entity.
         /// </summary>
-        public ILinkTextModifier linkTextModifier { protected get; set; }
-
+        public ILinkTextModifier LinkTextModifier { protected get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Autolink"/> class.
         /// </summary>
         public Autolink() {
-            urlClass = null;
-            listClass = DEFAULT_LIST_CLASS;
-            usernameClass = DEFAULT_USERNAME_CLASS;
-            hashtagClass = DEFAULT_HASHTAG_CLASS;
-            cashtagClass = DEFAULT_CASHTAG_CLASS;
-            usernameUrlBase = DEFAULT_USERNAME_URL_BASE;
-            listUrlBase = DEFAULT_LIST_URL_BASE;
-            hashtagUrlBase = DEFAULT_HASHTAG_URL_BASE;
-            cashtagUrlBase = DEFAULT_CASHTAG_URL_BASE;
-            invisibleTagAttrs = DEFAULT_INVISIBLE_TAG_ATTRS;
-            noFollow = true;
-            extractor.ExtractURLWithoutProtocol = false;
+            UrlClass = null;
+            ListClass = DEFAULT_LIST_CLASS;
+            UsernameClass = DEFAULT_USERNAME_CLASS;
+            HashtagClass = DEFAULT_HASHTAG_CLASS;
+            CashtagClass = DEFAULT_CASHTAG_CLASS;
+            UsernameUrlBase = DEFAULT_USERNAME_URL_BASE;
+            ListUrlBase = DEFAULT_LIST_URL_BASE;
+            HashtagUrlBase = DEFAULT_HASHTAG_URL_BASE;
+            CashtagUrlBase = DEFAULT_CASHTAG_URL_BASE;
+            InvisibleTagAttrs = DEFAULT_INVISIBLE_TAG_ATTRS;
+            NoFollow = true;
+            _extractor = new Extractor { ExtractURLWithoutProtocol = false };
         }
 
         /// <summary>
@@ -209,14 +214,14 @@ namespace TwitterText {
         /// <param name="attributes"></param>
         /// <param name="builder"></param>
         public void LinkToText(Entity entity, string text, IDictionary<string, string> attributes, StringBuilder builder) {
-            if (noFollow) {
+            if (NoFollow) {
                 attributes["rel"] = "nofollow";
             }
-            if (linkAttributeModifier != null) {
-                linkAttributeModifier.modify(entity, attributes);
+            if (LinkAttributeModifier != null) {
+                LinkAttributeModifier.modify(entity, attributes);
             }
-            if (linkTextModifier != null) {
-                text = linkTextModifier.modify(entity, text);
+            if (LinkTextModifier != null) {
+                text = LinkTextModifier.modify(entity, text);
             }
             // append <a> tag
             builder.Append("<a");
@@ -235,10 +240,10 @@ namespace TwitterText {
         /// <param name="attributes"></param>
         /// <param name="builder"></param>
         public void LinkToTextWithSymbol(Entity entity, string symbol, string text, IDictionary<string, string> attributes, StringBuilder builder) {
-            string taggedSymbol = string.IsNullOrEmpty(symbolTag) ? symbol : string.Format("<{0}>{1}</{0}>", symbolTag, symbol);
+            string taggedSymbol = string.IsNullOrEmpty(SymbolTag) ? symbol : string.Format("<{0}>{1}</{0}>", SymbolTag, symbol);
             text = EscapeHTML(text);
-            string taggedText = string.IsNullOrEmpty(textWithSymbolTag) ? text : string.Format("<{0}>{1}</{0}>", textWithSymbolTag, text);
-            bool includeSymbol = usernameIncludeSymbol || !Regex.AT_SIGNS.IsMatch(symbol);
+            string taggedText = string.IsNullOrEmpty(TextWithSymbolTag) ? text : string.Format("<{0}>{1}</{0}>", TextWithSymbolTag, text);
+            bool includeSymbol = UsernameIncludeSymbol || !Regex.AT_SIGNS.IsMatch(symbol);
 
             if (includeSymbol) {
                 LinkToText(entity, taggedSymbol.ToString() + taggedText, attributes, builder);
@@ -260,9 +265,9 @@ namespace TwitterText {
             string hashtag = entity.Value;
 
             IDictionary<string, string> attrs = new Dictionary<string, string>();
-            attrs["href"] = hashtagUrlBase + hashtag;
+            attrs["href"] = HashtagUrlBase + hashtag;
             attrs["title"] = "#" + hashtag;
-            attrs["class"] = hashtagClass;
+            attrs["class"] = HashtagClass;
 
             LinkToTextWithSymbol(entity, hashChar, hashtag, attrs, builder);
         }
@@ -277,9 +282,9 @@ namespace TwitterText {
             string cashtag = entity.Value;
 
             IDictionary<string, string> attrs = new Dictionary<string, string>();
-            attrs["href"] = cashtagUrlBase + cashtag;
+            attrs["href"] = CashtagUrlBase + cashtag;
             attrs["title"] = "$" + cashtag;
-            attrs["class"] = cashtagClass;
+            attrs["class"] = CashtagClass;
 
             LinkToTextWithSymbol(entity, "$", cashtag, attrs, builder);
         }
@@ -298,11 +303,11 @@ namespace TwitterText {
             IDictionary<string, string> attrs = new Dictionary<string, string>();
             if (entity.ListSlug != null) {
                 mention += entity.ListSlug;
-                attrs["class"] = listClass;
-                attrs["href"] = listUrlBase + mention;
+                attrs["class"] = ListClass;
+                attrs["href"] = ListUrlBase + mention;
             } else {
-                attrs["class"] = usernameClass;
-                attrs["href"] = usernameUrlBase + mention;
+                attrs["class"] = UsernameClass;
+                attrs["href"] = UsernameUrlBase + mention;
             }
 
             LinkToTextWithSymbol(entity, atChar, mention, attrs, builder);
@@ -364,7 +369,7 @@ namespace TwitterText {
                     string afterDisplayURL = entity.ExpandedURL.Substring(diplayURLIndexInExpandedURL + displayURLSansEllipses.Length);
                     string precedingEllipsis = entity.DisplayURL.StartsWith("…") ? "…" : "";
                     string followingEllipsis = entity.DisplayURL.EndsWith("…") ? "…" : "";
-                    string invisibleSpan = "<span " + invisibleTagAttrs + ">";
+                    string invisibleSpan = "<span " + InvisibleTagAttrs + ">";
 
                     StringBuilder sb = new StringBuilder("<span class='tco-ellipsis'>");
                     sb.Append(precedingEllipsis);
@@ -383,12 +388,12 @@ namespace TwitterText {
             IDictionary<string, string> attrs = new Dictionary<string, string>();
             attrs["href"] = url;
 
-            if (!string.IsNullOrEmpty(urlClass)) {
-                attrs["class"] = urlClass;
+            if (!string.IsNullOrEmpty(UrlClass)) {
+                attrs["class"] = UrlClass;
             }
 
-            if (!string.IsNullOrEmpty(urlTarget)) {
-                attrs["target"] = urlTarget;
+            if (!string.IsNullOrEmpty(UrlTarget)) {
+                attrs["target"] = UrlTarget;
             }
             LinkToText(entity, linkText, attrs, builder);
         }
@@ -436,7 +441,7 @@ namespace TwitterText {
             text = EscapeBrackets(text);
 
             // extract entities
-            List<Entity> entities = extractor.ExtractEntitiesWithIndices(text);
+            List<Entity> entities = _extractor.ExtractEntitiesWithIndices(text);
             return AutoLinkEntities(text, entities);
         }
 
@@ -448,7 +453,7 @@ namespace TwitterText {
         /// <param name="text">text of the Tweet to auto-link</param>
         /// <returns>text with auto-link HTML added</returns>
         public string AutoLinkUsernamesAndLists(string text) {
-            return AutoLinkEntities(text, extractor.ExtractMentionsOrListsWithIndices(text));
+            return AutoLinkEntities(text, _extractor.ExtractMentionsOrListsWithIndices(text));
         }
 
         /// <summary>
@@ -457,7 +462,7 @@ namespace TwitterText {
         /// <param name="text">text of the Tweet to auto-link</param>
         /// <returns>text with auto-link HTML added</returns>
         public string AutoLinkHashtags(string text) {
-            return AutoLinkEntities(text, extractor.ExtractHashtagsWithIndices(text));
+            return AutoLinkEntities(text, _extractor.ExtractHashtagsWithIndices(text));
         }
 
         /// <summary>
@@ -466,7 +471,7 @@ namespace TwitterText {
         /// <param name="text">text of the Tweet to auto-link</param>
         /// <returns>text with auto-link HTML added</returns>
         public string AutoLinkURLs(string text) {
-            return AutoLinkEntities(text, extractor.ExtractURLsWithIndices(text));
+            return AutoLinkEntities(text, _extractor.ExtractURLsWithIndices(text));
         }
 
         /// <summary>
@@ -475,7 +480,7 @@ namespace TwitterText {
         /// <param name="text">text of the Tweet to auto-link</param>
         /// <returns>text with auto-link HTML added.</returns>
         public string AutoLinkCashtags(string text) {
-            return AutoLinkEntities(text, extractor.ExtractCashtagsWithIndices(text));
+            return AutoLinkEntities(text, _extractor.ExtractCashtagsWithIndices(text));
         }
       
         /// <summary>

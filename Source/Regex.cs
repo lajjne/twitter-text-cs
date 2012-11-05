@@ -43,23 +43,23 @@ namespace TwitterText {
                                                          "\u0400-\u04ff\u0500-\u0527" +  // Cyrillic
                                                          "\u2de0-\u2dff\ua640-\ua69f" +  // Cyrillic Extended A/B
                                                          "\u0591-\u05bf\u05c1-\u05c2\u05c4-\u05c5\u05c7" +
-                                                         "\u05d0-\u05ea\u05f0-\u05f4" + // Hebrew
+                                                         "\u05d0-\u05ea\u05f0-\u05f4" +  // Hebrew
                                                          "\ufb1d-\ufb28\ufb2a-\ufb36\ufb38-\ufb3c\ufb3e\ufb40-\ufb41" +
-                                                         "\ufb43-\ufb44\ufb46-\ufb4f" + // Hebrew Pres. Forms
+                                                         "\ufb43-\ufb44\ufb46-\ufb4f" +  // Hebrew Pres. Forms
                                                          "\u0610-\u061a\u0620-\u065f\u066e-\u06d3\u06d5-\u06dc" +
                                                          "\u06de-\u06e8\u06ea-\u06ef\u06fa-\u06fc\u06ff" + // Arabic
                                                          "\u0750-\u077f\u08a0\u08a2-\u08ac\u08e4-\u08fe" + // Arabic Supplement and Extended A
                                                          "\ufb50-\ufbb1\ufbd3-\ufd3d\\ufd50-\ufd8f\ufd92-\ufdc7\ufdf0-\ufdfb" + // Pres. Forms A
-                                                         "\ufe70-\ufe74\ufe76-\ufefc" + // Pres. Forms B
-                                                         "\u200c" +                        // Zero-Width Non-Joiner
-                                                         "\u0e01-\u0e3a\u0e40-\u0e4e" + // Thai
+                                                         "\ufe70-\ufe74\ufe76-\ufefc" +  // Pres. Forms B
+                                                         "\u200c" +                      // Zero-Width Non-Joiner
+                                                         "\u0e01-\u0e3a\u0e40-\u0e4e" +  // Thai
                                                          "\u1100-\u11ff\u3130-\u3185\uA960-\uA97F\uAC00-\uD7AF\uD7B0-\uD7FF" + // Hangul (Korean)
-                                                         "\\p{IsHiragana}\\p{IsKatakana}" +  // Japanese Hiragana and Katakana
-                                                         "\\p{IsCJKUnifiedIdeographs}" +     // Japanese Kanji / Chinese Han
-                                                         "\u3003\u3005\u303b" +           // Kanji/Han iteration marks
+                                                         "\\p{IsHiragana}\\p{IsKatakana}" + // Japanese Hiragana and Katakana
+                                                         "\\p{IsCJKUnifiedIdeographs}" + // Japanese Kanji / Chinese Han
+                                                         "\u3003\u3005\u303b" +          // Kanji/Han iteration marks
                                                          "\uff21-\uff3a\uff41-\uff5a" +  // full width Alphabet
-                                                         "\uff66-\uff9f" +                 // half width Katakana
-                                                         "\uffa1-\uffdc";                  // half width Hangul (Korean)
+                                                         "\uff66-\uff9f" +               // half width Katakana
+                                                         "\uffa1-\uffdc";                // half width Hangul (Korean)
         private const string HASHTAG_ALPHA_NUMERIC_CHARS = "0-9\uff10-\uff19_" + HASHTAG_ALPHA_CHARS;
         private const string HASHTAG_ALPHA = "[" + HASHTAG_ALPHA_CHARS + "]";
         private const string HASHTAG_ALPHA_NUMERIC = "[" + HASHTAG_ALPHA_NUMERIC_CHARS + "]";
@@ -72,7 +72,6 @@ namespace TwitterText {
         private const string URL_VALID_SUBDOMAIN = "(?:(?:" + URL_VALID_CHARS + "(?:" + URL_VALID_CHARS + "|[\\-_])*)?" + URL_VALID_CHARS + "\\.)";
 
         private const string URL_VALID_DOMAIN_NAME = "(?:(?:" + URL_VALID_CHARS + "(?:" + URL_VALID_CHARS + "|\\-)*)?" + URL_VALID_CHARS + "\\.)";
-
 
         /* Any non-space, non-punctuation characters. \p{Z} = any kind of whitespace or invisible separator. */
         private const string URL_VALID_UNICODE_CHARS = "[.[^" + PUNCT_CHARS + "\\s\\p{Z}\\p{IsGeneralPunctuation}]]";
@@ -111,7 +110,6 @@ namespace TwitterText {
             URL_VALID_DOMAIN_NAME + URL_VALID_CCTLD + "(?=/)" +     // e.g. t.co/
           ")";
 
-
         private const string URL_VALID_PORT_NUMBER = "[0-9]+"; // .NET does not support possessive quantifiers
 
         private const string URL_VALID_GENERAL_PATH_CHARS = "[a-z0-9!\\*';:=\\+,.\\$/%#\\[\\]\\-_~\\|&" + LATIN_ACCENTS_CHARS + "]";
@@ -138,7 +136,7 @@ namespace TwitterText {
           "(" +                                                          //  $3 URL
             "(https?://)?" +                                             //  $4 Protocol (optional)
             "(" + URL_VALID_DOMAIN + ")" +                               //  $5 Domain(s)
-            "(?::(" + URL_VALID_PORT_NUMBER + "))?" +                     //  $6 Port number (optional)
+            "(?::(" + URL_VALID_PORT_NUMBER + "))?" +                    //  $6 Port number (optional)
             "(/" +
             //URL_VALID_PATH + "*+" +
               URL_VALID_PATH + "*" + // .NET does not support possessive quantifiers

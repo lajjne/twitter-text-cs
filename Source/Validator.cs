@@ -9,7 +9,10 @@ namespace TwitterText {
     /// </summary>
     public class Validator {
 
-        private Extractor _extractor = new Extractor();
+        /// <summary>
+        /// The Extractor used to extract entities from text.
+        /// </summary>
+        private Extractor _extractor;
         
         /// <summary>
         /// 
@@ -32,6 +35,7 @@ namespace TwitterText {
         public Validator() {
             ShortUrlLength = 20;
             ShortUrlLengthHttps = 21;
+            _extractor = new Extractor();
         }
 
         /// <summary>

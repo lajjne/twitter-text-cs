@@ -20,7 +20,7 @@ namespace Tests {
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context) {
-            autolink.noFollow = false;
+            autolink.NoFollow = false;
         }
 
         [TestMethod]
