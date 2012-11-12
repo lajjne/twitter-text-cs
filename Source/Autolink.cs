@@ -216,10 +216,10 @@ namespace TwitterText {
                 attributes["rel"] = "nofollow";
             }
             if (LinkAttributeModifier != null) {
-                LinkAttributeModifier.modify(entity, attributes);
+                LinkAttributeModifier.Modify(entity, attributes);
             }
             if (LinkTextModifier != null) {
-                text = LinkTextModifier.modify(entity, text);
+                text = LinkTextModifier.Modify(entity, text);
             }
             // append <a> tag
             builder.Append("<a");
@@ -485,14 +485,14 @@ namespace TwitterText {
         /// 
         /// </summary>
         public interface ILinkAttributeModifier {
-            void modify(Entity entity, IDictionary<string, string> attributes);
+            void Modify(Entity entity, IDictionary<string, string> attributes);
         };
 
         /// <summary>
         /// 
         /// </summary>
         public interface ILinkTextModifier {
-            string modify(Entity entity, string text);
+            string Modify(Entity entity, string text);
         }
     }
 }
