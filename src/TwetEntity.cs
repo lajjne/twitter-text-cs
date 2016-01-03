@@ -36,12 +36,12 @@ namespace Twitter.Text {
         /// <summary>
         /// 
         /// </summary>
-        public string DisplayURL { get; set; }
+        public string DisplayUrl { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public string ExpandedURL { get; set; }
+        public string ExpandedUrl { get; set; }
 
         /// <summary>
         /// 

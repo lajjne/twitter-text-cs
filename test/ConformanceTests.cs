@@ -13,8 +13,8 @@ namespace Twitter.Text.Tests {
     public class ConformanceTests {
         public TestContext TestContext { get; set; }
 
-        static Extractor extractor = new Extractor();
         static Autolink autolink = new Autolink { NoFollow = false };
+        static Extractor extractor = new Extractor();
         static HitHighlighter highlighter = new HitHighlighter();
         static Validator validator = new Validator();
 
@@ -98,7 +98,7 @@ namespace Twitter.Text.Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<dynamic>("extract.yml", "urls")) {
                 try {
-                    List<string> actual = extractor.ExtractURLs(test.Text);
+                    List<string> actual = extractor.ExtractUrls(test.Text);
                     CollectionAssert.AreEquivalent(test.Expected, actual);
                 } catch (Exception) {
                     failures.Add(test.Description + ": " + test.Text);
@@ -114,7 +114,7 @@ namespace Twitter.Text.Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<dynamic>("extract.yml", "urls_with_indices")) {
                 try {
-                    var actual = extractor.ExtractURLsWithIndices(test.Text);
+                    var actual = extractor.ExtractUrlsWithIndices(test.Text);
                     for (int i = 0; i < actual.Count; i++) {
                         var entity = actual[i];
                         Assert.AreEqual(test.Expected[i].url, entity.Value);
@@ -257,7 +257,7 @@ namespace Twitter.Text.Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<string>("autolink.yml", "urls")) {
                 try {
-                    string actual = autolink.AutoLinkURLs(test.Text);
+                    string actual = autolink.AutoLinkUrls(test.Text);
                     Assert.AreEqual(test.Expected, actual);
                 } catch (Exception) {
                     failures.Add(test.Description + ": " + test.Text);
@@ -466,7 +466,7 @@ namespace Twitter.Text.Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<List<string>>("tlds.yml", "country")) {
                 try {
-                    List<string> actual = extractor.ExtractURLs(test.Text);
+                    List<string> actual = extractor.ExtractUrls(test.Text);
                     CollectionAssert.AreEqual(test.Expected, actual);
                 } catch (Exception) {
                     failures.Add(test.Description + ": " + test.Text);
@@ -482,7 +482,7 @@ namespace Twitter.Text.Tests {
             var failures = new List<string>();
             foreach (var test in LoadTests<List<string>>("tlds.yml", "generic")) {
                 try {
-                    List<string> actual = extractor.ExtractURLs(test.Text);
+                    List<string> actual = extractor.ExtractUrls(test.Text);
                     CollectionAssert.AreEqual(test.Expected, actual);
                 } catch (Exception) {
                     failures.Add(test.Description + ": " + test.Text);

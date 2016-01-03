@@ -41,7 +41,7 @@ namespace Twitter.Text {
             } catch { }
 
             int length = new StringInfo(text).LengthInTextElements;
-            foreach (TweetEntity urlEntity in _extractor.ExtractURLsWithIndices(text)) {
+            foreach (TweetEntity urlEntity in _extractor.ExtractUrlsWithIndices(text)) {
                 // Subtract the length of the original URL
                 length -= (urlEntity.End - urlEntity.Start);
 

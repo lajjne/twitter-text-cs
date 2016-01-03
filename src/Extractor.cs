@@ -23,7 +23,7 @@ namespace Twitter.Text {
         /// <summary>
         /// 
         /// </summary>
-        public bool ExtractURLWithoutProtocol { get; set; } = true;
+        public bool ExtractUrlWithoutProtocol { get; set; } = true;
 
         /// <summary>
         /// Create a new extractor.
@@ -69,7 +69,7 @@ namespace Twitter.Text {
         /// <returns>list of extracted entities</returns>
         public List<TweetEntity> ExtractEntitiesWithIndices(string text) {
             List<TweetEntity> entities = new List<TweetEntity>();
-            entities.AddRange(ExtractURLsWithIndices(text));
+            entities.AddRange(ExtractUrlsWithIndices(text));
             entities.AddRange(ExtractHashtagsWithIndices(text, false));
             entities.AddRange(ExtractMentionsOrListsWithIndices(text));
             entities.AddRange(ExtractCashtagsWithIndices(text));
@@ -182,13 +182,13 @@ namespace Twitter.Text {
         /// </summary>
         /// <param name="text">text of the tweet from which to extract URLs</param>
         /// <returns>List of URLs referenced.</returns>
-        public List<string> ExtractURLs(string text) {
+        public List<string> ExtractUrls(string text) {
             if (string.IsNullOrWhiteSpace(text)) {
                 return new List<string>();
             }
 
             List<string> urls = new List<string>();
-            foreach (TweetEntity entity in ExtractURLsWithIndices(text)) {
+            foreach (TweetEntity entity in ExtractUrlsWithIndices(text)) {
                 urls.Add(entity.Value);
             }
             return urls;
@@ -199,9 +199,9 @@ namespace Twitter.Text {
         /// </summary>
         /// <param name="text">text of the tweet from which to extract URLs</param>
         /// <returns>List of URLs referenced.</returns>
-        public List<TweetEntity> ExtractURLsWithIndices(string text) {
+        public List<TweetEntity> ExtractUrlsWithIndices(string text) {
             if (string.IsNullOrWhiteSpace(text)
-                || (ExtractURLWithoutProtocol ? text.IndexOf('.') : text.IndexOf(':')) == -1) {
+                || (ExtractUrlWithoutProtocol ? text.IndexOf('.') : text.IndexOf(':')) == -1) {
                 // Performance optimization.
                 // If text doesn't contain '.' or ':' at all, text doesn't contain URL,
                 // so we can simply return an empty list.
@@ -214,7 +214,7 @@ namespace Twitter.Text {
             foreach (Match match in matcher) {
                 if (!match.Groups[Regex.VALID_URL_GROUP_PROTOCOL].Success) {
                     // Skip if protocol is not present and 'extractURLWithoutProtocol' is false or URL is preceded by invalid character.
-                    if (!ExtractURLWithoutProtocol || Regex.INVALID_URL_WITHOUT_PROTOCOL_MATCH_BEGIN.IsMatch(match.Groups[Regex.VALID_URL_GROUP_BEFORE].Value)) {
+                    if (!ExtractUrlWithoutProtocol || Regex.INVALID_URL_WITHOUT_PROTOCOL_MATCH_BEGIN.IsMatch(match.Groups[Regex.VALID_URL_GROUP_BEFORE].Value)) {
                         continue;
                     }
                 }
@@ -295,7 +295,7 @@ namespace Twitter.Text {
 
             if (checkUrlOverlap) {
                 // extract URLs
-                List<TweetEntity> urls = ExtractURLsWithIndices(text);
+                List<TweetEntity> urls = ExtractUrlsWithIndices(text);
                 if (urls.Any()) {
                     extracted.AddRange(urls);
                     // remove overlap

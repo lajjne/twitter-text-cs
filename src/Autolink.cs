@@ -108,7 +108,7 @@ namespace Twitter.Text {
         /// </summary>
         /// <param name="linkURLWithoutProtocol">Whether or not to link urls without a protocol</param>
         public Autolink(bool linkURLWithoutProtocol) {
-            _extractor = new Extractor { ExtractURLWithoutProtocol = linkURLWithoutProtocol };
+            _extractor = new Extractor { ExtractUrlWithoutProtocol = linkURLWithoutProtocol };
         }
 
         /// <summary>
@@ -273,11 +273,11 @@ namespace Twitter.Text {
         /// <param name="entity"></param>
         /// <param name="text"></param>
         /// <param name="builder"></param>
-        public void LinkToURL(TweetEntity entity, string text, StringBuilder builder) {
+        public void LinkTorUrl(TweetEntity entity, string text, StringBuilder builder) {
             string url = entity.Value;
             string linkText = EscapeHTML(url);
 
-            if (entity.DisplayURL != null && entity.ExpandedURL != null) {
+            if (entity.DisplayUrl != null && entity.ExpandedUrl != null) {
                 // Goal: If a user copies and pastes a tweet containing t.co'ed link, the resulting paste
                 // should contain the full original URL (expanded_url), not the display URL.
                 //
@@ -316,13 +316,13 @@ namespace Twitter.Text {
                 // Exception: pic.twitter.com images, for which expandedUrl = "https://twitter.com/#!/username/status/1234/photo/1
                 // For those URLs, display_url is not a substring of expanded_url, so we don't do anything special to render the elided parts.
                 // For a pic.twitter.com URL, the only elided part will be the "https://", so this is fine.
-                string displayURLSansEllipses = entity.DisplayURL.Replace("…", "");
-                int diplayURLIndexInExpandedURL = entity.ExpandedURL.IndexOf(displayURLSansEllipses);
+                string displayURLSansEllipses = entity.DisplayUrl.Replace("…", "");
+                int diplayURLIndexInExpandedURL = entity.ExpandedUrl.IndexOf(displayURLSansEllipses);
                 if (diplayURLIndexInExpandedURL != -1) {
-                    string beforeDisplayURL = entity.ExpandedURL.Substring(0, diplayURLIndexInExpandedURL);
-                    string afterDisplayURL = entity.ExpandedURL.Substring(diplayURLIndexInExpandedURL + displayURLSansEllipses.Length);
-                    string precedingEllipsis = entity.DisplayURL.StartsWith("…") ? "…" : "";
-                    string followingEllipsis = entity.DisplayURL.EndsWith("…") ? "…" : "";
+                    string beforeDisplayURL = entity.ExpandedUrl.Substring(0, diplayURLIndexInExpandedURL);
+                    string afterDisplayURL = entity.ExpandedUrl.Substring(diplayURLIndexInExpandedURL + displayURLSansEllipses.Length);
+                    string precedingEllipsis = entity.DisplayUrl.StartsWith("…") ? "…" : "";
+                    string followingEllipsis = entity.DisplayUrl.EndsWith("…") ? "…" : "";
                     string invisibleSpan = "<span " + InvisibleTagAttrs + ">";
 
                     StringBuilder sb = new StringBuilder("<span class='tco-ellipsis'>");
@@ -335,15 +335,15 @@ namespace Twitter.Text {
 
                     linkText = sb.ToString();
                 } else {
-                    linkText = entity.DisplayURL;
+                    linkText = entity.DisplayUrl;
                 }
             }
 
             IDictionary<string, string> attrs = new Dictionary<string, string>();
             attrs["href"] = url;
 
-            if (!string.IsNullOrWhiteSpace(entity.DisplayURL) && !string.IsNullOrWhiteSpace(entity.ExpandedURL)) {
-                attrs["title"] = entity.ExpandedURL;
+            if (!string.IsNullOrWhiteSpace(entity.DisplayUrl) && !string.IsNullOrWhiteSpace(entity.ExpandedUrl)) {
+                attrs["title"] = entity.ExpandedUrl;
             }
 
             if (!string.IsNullOrWhiteSpace(UrlClass)) {
@@ -372,7 +372,7 @@ namespace Twitter.Text {
 
                 switch (entity.Type) {
                     case TweetEntityType.Url:
-                        LinkToURL(entity, text, builder);
+                        LinkTorUrl(entity, text, builder);
                         break;
                     case TweetEntityType.Hashtag:
                         LinkToHashtag(entity, text, builder);
@@ -429,8 +429,8 @@ namespace Twitter.Text {
         /// </summary>
         /// <param name="text">text of the Tweet to auto-link</param>
         /// <returns>text with auto-link HTML added</returns>
-        public string AutoLinkURLs(string text) {
-            return AutoLinkEntities(text, _extractor.ExtractURLsWithIndices(text));
+        public string AutoLinkUrls(string text) {
+            return AutoLinkEntities(text, _extractor.ExtractUrlsWithIndices(text));
         }
 
         /// <summary>
