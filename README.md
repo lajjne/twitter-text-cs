@@ -1,10 +1,8 @@
-twitter-text-cs
-===============
+# twitter-text-cs
 
-A C# implementation of Twitter's text processing library
+A C# implementation of[Twitter's text processing library](https://github.com/twitter/twitter-text)
 
-Testing
-=======
+## Testing
 
 Before running the tests, ensure you have the twitter-text package checked out:
 
