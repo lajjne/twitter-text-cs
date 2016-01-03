@@ -71,22 +71,23 @@ namespace Twitter.Text {
         // Hashtag related patterns
         private const string HASHTAG_LETTERS = "\\p{L}\\p{M}";
         private const string HASHTAG_NUMERALS = "\\p{Nd}";
-        private const string HASHTAG_SPECIAL_CHARS = 
-                                       "_" +       // underscore
-                                       "\\u200c" + // ZERO WIDTH NON-JOINER (ZWNJ)
-                                       "\\u200d" + // ZERO WIDTH JOINER (ZWJ)
-                                       "\\ua67e" + // CYRILLIC KAVYKA
-                                       "\\u05be" + // HEBREW PUNCTUATION MAQAF
-                                       "\\u05f3" + // HEBREW PUNCTUATION GERESH
-                                       "\\u05f4" + // HEBREW PUNCTUATION GERSHAYIM
-                                       "\\u309b" + // KATAKANA-HIRAGANA VOICED SOUND MARK
-                                       "\\u309c" + // KATAKANA-HIRAGANA SEMI-VOICED SOUND MARK
-                                       "\\u30a0" + // KATAKANA-HIRAGANA DOUBLE HYPHEN
-                                       "\\u30fb" + // KATAKANA MIDDLE DOT
-                                       "\\u3003" + // DITTO MARK
-                                       "\\u0f0b" + // TIBETAN MARK INTERSYLLABIC TSHEG
-                                       "\\u0f0c" + // TIBETAN MARK DELIMITER TSHEG BSTAR
-                                       "\\u0f0d";  // TIBETAN MARK SHAD
+        private const string HASHTAG_SPECIAL_CHARS = "_" +       // underscore
+                                                     "\\u200c" + // ZERO WIDTH NON-JOINER (ZWNJ)
+                                                     "\\u200d" + // ZERO WIDTH JOINER (ZWJ)
+                                                     "\\ua67e" + // CYRILLIC KAVYKA
+                                                     "\\u05be" + // HEBREW PUNCTUATION MAQAF
+                                                     "\\u05f3" + // HEBREW PUNCTUATION GERESH
+                                                     "\\u05f4" + // HEBREW PUNCTUATION GERSHAYIM
+                                                     "\\u309b" + // KATAKANA-HIRAGANA VOICED SOUND MARK
+                                                     "\\u309c" + // KATAKANA-HIRAGANA SEMI-VOICED SOUND MARK
+                                                     "\\u30a0" + // KATAKANA-HIRAGANA DOUBLE HYPHEN
+                                                     "\\u30fb" + // KATAKANA MIDDLE DOT
+                                                     "\\u3003" + // DITTO MARK
+                                                     "\\u0f0b" + // TIBETAN MARK INTERSYLLABIC TSHEG
+                                                     "\\u0f0c" + // TIBETAN MARK DELIMITER TSHEG BSTAR
+                                                     "\\u0f0d" + // TIBETAN MARK SHAD
+                                                     "\\u00b7";  // MIDDLE DOT
+
         private const string HASHTAG_LETTERS_NUMERALS = HASHTAG_LETTERS + HASHTAG_NUMERALS + HASHTAG_SPECIAL_CHARS;
 
         private const string HASHTAG_LETTERS_SET = "[" + HASHTAG_LETTERS + "]";
