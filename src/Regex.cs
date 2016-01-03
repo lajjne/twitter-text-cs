@@ -177,7 +177,7 @@ namespace Twitter.Text {
 
         private const string URL_VALID_URL_QUERY_CHARS = "[a-z0-9!?\\*'\\(\\);:&=\\+\\$/%#\\[\\]\\-_\\.,~\\|@]";
 
-        private const string URL_VALID_URL_QUERY_ENDING_CHARS = "[a-z0-9_&=#/]";
+        private const string URL_VALID_URL_QUERY_ENDING_CHARS = "[a-z0-9_&=#/-]";
 
         private static readonly string VALID_URL_PATTERN_STRING =
             "(" +                                                   //  $1 total match
