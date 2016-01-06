@@ -1,4 +1,4 @@
-The MIT License (MIT) 
+The MIT License (MIT)  
 Copyright (c) 2012 Linus Birgerstam
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
